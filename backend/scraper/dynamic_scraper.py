@@ -1,9 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-import time
 import os
+import time
 
 def get_dynamic_content(url):
     try:
@@ -20,9 +19,10 @@ def get_dynamic_content(url):
         driver.get(url)
         time.sleep(3)  # wait for the page to load
 
-        body_text = driver.find_element(By.TAG_NAME, "body").text
+        html_content = driver.page_source
 
         driver.quit()
-        return {"html": body_text}
+        return {"html": html_content}
+
     except Exception as e:
         return {"error": str(e)}

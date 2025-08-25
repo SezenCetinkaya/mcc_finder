@@ -95,6 +95,30 @@ export default function ScraperForm() {
               )}
             </div>
           </div>
+
+          {/* visual content */}
+          <div className="scraper-card">
+            <h2 className="scraper-card-title">Resimler</h2>
+            <div className="images-grid">
+              {result.images && result.images.length > 0 ? (
+                result.images.map((src, i) => (
+                  <div key={i} className="image-wrapper">
+                    <img src={src} alt={`img-${i}`} className="scraped-image" />
+                    <a
+                      href={src}
+                      download={`image-${i}.jpg`}
+                      className="download-button"
+                    >
+                      İndir
+                    </a>
+                  </div>
+                ))
+              ) : (
+                <p className="placeholder-text">Resim bulunamadı.</p>
+              )}
+            </div>
+          </div>
+
         </div>
       )}
     </div>
