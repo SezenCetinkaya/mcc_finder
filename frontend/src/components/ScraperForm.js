@@ -40,6 +40,18 @@ export default function ScraperForm() {
     }
   };
 
+  // Metni indir
+  const downloadText = () => {
+    if (!result || !result.text) return;
+    const blob = new Blob([result.text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'scraped_text.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="scraper-container">
       <h1 className="scraper-title">MCC Finder</h1>
@@ -61,56 +73,31 @@ export default function ScraperForm() {
         </button>
       </div>
 
-      {result && result.meaningful && (
-        <div className="scraper-results">
-          {/* Kelimeler */}
-          <div className="scraper-card">
-            <h2 className="scraper-card-title">Anlamlı Kelimeler</h2>
-            <div className="words-grid">
-              {result.meaningful.words.length > 0 ? (
-                result.meaningful.words.map((w, i) => (
-                  <span
-                    key={i}
-                    className={`word-badge ${getRandomColor()}`}
-                  >
-                    {w}
-                  </span>
-                ))
-              ) : (
-                <p className="placeholder-text">Kelime bulunamadı.</p>
-              )}
+      {result && (
+        <div className="scraper-results flex justify-between gap-4">
+          {/* Görseller */}
+          <div className="scraper-card w-1/2">
+            <div className="flex justify-between items-center">
+              <h2 className="scraper-card-title">Resimler</h2>
+              <button
+                onClick={() => {
+                  result.images.forEach((src, i) => {
+                    const a = document.createElement('a');
+                    a.href = src;
+                    a.download = `image-${i}.jpg`;
+                    a.click();
+                  });
+                }}
+                className="scraper-button text-sm"
+              >
+                Tümünü İndir
+              </button>
             </div>
-          </div>
-
-          {/* Cümleler */}
-          <div className="scraper-card">
-            <h2 className="scraper-card-title">Anlamlı Cümleler</h2>
-            <div className="sentences-grid">
-              {result.meaningful.sentences.length > 0 ? (
-                result.meaningful.sentences.map((s, i) => (
-                  <p key={i} className="sentence-badge">{s}</p>
-                ))
-              ) : (
-                <p className="placeholder-text">Cümle bulunamadı.</p>
-              )}
-            </div>
-          </div>
-
-          {/* visual content */}
-          <div className="scraper-card">
-            <h2 className="scraper-card-title">Resimler</h2>
-            <div className="images-grid">
+            <div className="images-grid mt-2">
               {result.images && result.images.length > 0 ? (
                 result.images.map((src, i) => (
                   <div key={i} className="image-wrapper">
                     <img src={src} alt={`img-${i}`} className="scraped-image" />
-                    <a
-                      href={src}
-                      download={`image-${i}.jpg`}
-                      className="download-button"
-                    >
-                      İndir
-                    </a>
                   </div>
                 ))
               ) : (
@@ -119,6 +106,32 @@ export default function ScraperForm() {
             </div>
           </div>
 
+          {/* Metin */}
+          <div className="scraper-card w-1/2">
+            <div className="flex justify-between items-center">
+              <h2 className="scraper-card-title">Metin / Kelimeler</h2>
+              <button
+                onClick={downloadText}
+                className="scraper-button text-sm"
+              >
+                Metni İndir
+              </button>
+            </div>
+
+            <div className="words-grid mt-2">
+              {result.text ? (
+                result.text
+                  .split(/(?<=[.!?])\s+/) 
+                  .map((sentence, i) => (
+                    <p key={i} className="word-badge">
+                      {sentence}
+                    </p>
+                  ))
+              ) : (
+                <p className="placeholder-text">Metin bulunamadı.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
